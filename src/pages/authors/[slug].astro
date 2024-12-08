@@ -1,0 +1,73 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseHead from "../../components/base/BaseHead.astro";
+import Header from "../../components/base/Header.astro";
+import Offer from "../../components/Offer.astro";
+import Footer from "../../components/base/Footer.astro";
+
+// 1. Generate a new path for every collection entry
+export async function getStaticPaths() {
+  const authorEntries = await getCollection("authors");
+
+  return authorEntries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"authors">;
+}
+// 2. When it's time to render, you can get the entry directly from the prop
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={entry.data.title} description={entry.data.description} />
+  </head>
+  <body class="bg-white-50">
+    <Header />
+    <main>
+      <div class="grid grid-cols-12">
+        <div
+          class="lg:col-span-6 lg:col-start-4 lg:col-end-10 col-span-10 col-start-2 col-end-12"
+        >
+          <article>
+            <h1 class="text-secondary-950 text-balance">{entry.data.title}</h1>
+            <div class="flex flex-row gap-3">
+              <div>
+                <time datetime={new Date(entry.data.updatedDate).toISOString()}>
+                  Updated: {
+                    new Date(entry.data.updatedDate).toLocaleDateString(
+                      undefined,
+                      {
+                        dateStyle: "medium",
+                        timeZone: "UTC",
+                      }
+                    )
+                  }
+                </time>
+              </div>
+            </div>
+            <div
+              class="bg-white-50 rounded-xl margin-top-large paragraph-width"
+            >
+            </div>
+            <Content />
+          </article>
+          <Offer />
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .paragraph-width {
+    max-width: 65ch;
+  }
+</style>

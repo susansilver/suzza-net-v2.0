@@ -1,0 +1,71 @@
+---
+import BaseHead from "../components/base/BaseHead.astro";
+import Header from "../components/base/Header.astro";
+import Footer from "../components/base/Footer.astro";
+import Offer from "../components/Offer.astro";
+
+interface Props {
+  frontmatter: {
+    title: string;
+    updatedDate: string;
+    description: string;
+    pubDate: string;
+    author: string;
+    authorUrl: string;
+    show: boolean;
+  };
+}
+
+const { frontmatter } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={frontmatter.title} description={frontmatter.description} />
+  </head>
+  <body class="bg-white-50">
+    <Header />
+    <main>
+      <div class="grid grid-cols-12">
+        <div
+          class="lg:col-span-6 lg:col-start-4 lg:col-end-10 col-span-10 col-start-2 col-end-12"
+        >
+          <article>
+            <h1 class="text-secondary-950 text-balance">{frontmatter.title}</h1>
+            <div class="flex flex-row gap-3">
+              <div>
+                <time
+                  datetime={new Date(frontmatter.updatedDate).toISOString()}
+                >
+                  Updated: {
+                    new Date(frontmatter.updatedDate).toLocaleDateString(
+                      undefined,
+                      {
+                        dateStyle: "medium",
+                        timeZone: "UTC",
+                      }
+                    )
+                  }
+                </time>
+              </div>
+            </div>
+            <div
+              class="bg-white-50 rounded-xl margin-top-large paragraph-width"
+            >
+              <slot />
+            </div>
+          </article>
+          <Offer />
+        </div>
+      </div>
+
+      <Footer />
+    </main>
+  </body>
+</html>
+
+<style>
+  .paragraph-width {
+    max-width: 65ch;
+  }
+</style>
